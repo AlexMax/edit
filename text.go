@@ -18,16 +18,22 @@ func NewText() *Text {
 	return text
 }
 
-func (t *Text) SetText(text string) {
-	t.text = text
-	t.dirty = true
+func (t *Text) Draw(x int, y int) {
+	tw, th := termbox.Size()
+
+	CellCopyRect(
+		t.buffer, t.actualWidth, t.actualHeight,
+		termbox.CellBuffer(), tw, th,
+		0, 0, x, y, x+t.actualWidth, y+t.actualHeight)
 }
 
-func (t *Text) Draw() {
+func (t *Text) Refresh() {
+	// No subwidgets, so we can return early if not dirty.
 	if t.dirty == false {
 		return
 	}
 
+	// Determine actual width and height of text.
 	if t.desiredWidth == 0 {
 		var maxlen int = 0
 
@@ -50,8 +56,10 @@ func (t *Text) Draw() {
 		t.actualHeight = t.desiredHeight
 	}
 
+	// Create buffer.
 	t.buffer = make([]termbox.Cell, t.actualWidth*t.actualHeight)
 
+	// Render text.
 	var x, y int
 	for _, r := range t.text {
 		if r == '\n' {
@@ -64,4 +72,9 @@ func (t *Text) Draw() {
 	}
 
 	t.dirty = false
+}
+
+func (t *Text) SetText(text string) {
+	t.text = text
+	t.dirty = true
 }
