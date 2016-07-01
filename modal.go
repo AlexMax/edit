@@ -3,6 +3,11 @@ package main
 import "github.com/nsf/termbox-go"
 import "github.com/mattn/go-runewidth"
 
+const (
+	marginX = 2
+	marginY = 1
+)
+
 type Modal struct {
 	Widget
 	title string
@@ -24,21 +29,20 @@ func (m *Modal) Draw(x int, y int) {
 		0, 0, x, y, x+m.actualWidth, y+m.actualHeight)
 
 	if m.body != nil {
-		m.body.Draw(x, y+1)
+		m.body.Draw(x+marginX, y+marginY+1)
 	}
 }
 
 func (m *Modal) Refresh() {
 	// Determine actual width and height of modal.
 	if m.desiredWidth == 0 {
-		m.actualWidth = m.body.GetActualWidth()
+		m.actualWidth = m.body.GetActualWidth() + marginX*2
 	} else {
 		m.actualWidth = m.desiredWidth
 	}
 
 	if m.desiredHeight == 0 {
-		m.actualHeight = m.body.GetActualHeight()
-		m.actualHeight += 1
+		m.actualHeight = m.body.GetActualHeight() + marginY*2 + 1
 	} else {
 		m.actualHeight = m.desiredHeight
 	}
@@ -50,14 +54,21 @@ func (m *Modal) Refresh() {
 	titleWidth := runewidth.StringWidth(m.title)
 	x := (m.actualWidth / 2) - (titleWidth / 2)
 	for i := 0; i < x; i++ {
-		m.SetCell(i, 0, ' ', Config.DialogTitleFG, Config.DialogTitleBG)
+		m.SetCell(i, 0, 0, Config.DialogTitleFG, Config.DialogTitleBG)
 	}
 	for _, r := range m.title {
 		m.SetCell(x, 0, r, Config.DialogTitleFG, Config.DialogTitleBG)
 		x += runewidth.RuneWidth(r)
 	}
 	for ; x < m.actualWidth; x++ {
-		m.SetCell(x, 0, ' ', Config.DialogTitleFG, Config.DialogTitleBG)
+		m.SetCell(x, 0, 0, Config.DialogTitleFG, Config.DialogTitleBG)
+	}
+
+	// Render empty body.
+	for by := 1; by < m.actualHeight; by++ {
+		for bx := 0; bx < m.actualWidth; bx++ {
+			m.SetCell(bx, by, 0, Config.DialogFG, Config.DialogBG)
+		}
 	}
 
 	m.dirty = false

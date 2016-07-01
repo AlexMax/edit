@@ -59,6 +59,13 @@ func (t *Text) Refresh() {
 	// Create buffer.
 	t.buffer = make([]termbox.Cell, t.actualWidth*t.actualHeight)
 
+	// Color empty buffer.
+	for by := 0; by < t.actualHeight; by++ {
+		for bx := 0; bx < t.actualWidth; bx++ {
+			t.SetCell(bx, by, 0, Config.DialogFG, Config.DialogBG)
+		}
+	}
+
 	// Render text.
 	var x, y int
 	for _, r := range t.text {
@@ -66,7 +73,7 @@ func (t *Text) Refresh() {
 			x = 0
 			y += 1
 		} else {
-			t.SetCell(x, y, r, termbox.ColorDefault, termbox.ColorDefault)
+			t.SetCell(x, y, r, Config.DialogFG, Config.DialogBG)
 			x += runewidth.RuneWidth(r)
 		}
 	}
