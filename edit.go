@@ -72,7 +72,7 @@ func main() {
 
 	var x, y int
 	for {
-		termbox.Clear(termbox.ColorDefault, termbox.ColorDefault)
+		termbox.Clear(termbox.ColorWhite, termbox.ColorBlue)
 		aboutModal.Draw(x, y)
 		termbox.Flush()
 

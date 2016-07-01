@@ -37,7 +37,7 @@ func (m *Modal) Refresh() {
 	}
 
 	if m.desiredHeight == 0 {
-		m.actualHeight = m.body.GetActualWidth()
+		m.actualHeight = m.body.GetActualHeight()
 		m.actualHeight += 1
 	} else {
 		m.actualHeight = m.desiredHeight
@@ -49,9 +49,15 @@ func (m *Modal) Refresh() {
 	// Render title.
 	titleWidth := runewidth.StringWidth(m.title)
 	x := (m.actualWidth / 2) - (titleWidth / 2)
+	for i := 0; i < x; i++ {
+		m.SetCell(i, 0, ' ', Config.DialogTitleFG, Config.DialogTitleBG)
+	}
 	for _, r := range m.title {
-		m.SetCell(x, 0, r, termbox.ColorDefault, termbox.ColorDefault)
+		m.SetCell(x, 0, r, Config.DialogTitleFG, Config.DialogTitleBG)
 		x += runewidth.RuneWidth(r)
+	}
+	for ; x < m.actualWidth; x++ {
+		m.SetCell(x, 0, ' ', Config.DialogTitleFG, Config.DialogTitleBG)
 	}
 
 	m.dirty = false
