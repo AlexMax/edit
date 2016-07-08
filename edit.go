@@ -17,9 +17,18 @@ func main() {
 	aboutText.SetText("edit 0.0\nCopyright (C) 2016  Alex Mayfield")
 	aboutText.Refresh()
 
+	okButton := NewButton()
+	okButton.SetText("OK")
+	okButton.Refresh()
+
+	bodySplit := NewVSplit()
+	bodySplit.AddWidget(aboutText)
+	bodySplit.AddWidget(okButton)
+	bodySplit.Refresh()
+
 	aboutModal := NewModal()
 	aboutModal.SetTitle("About Edit")
-	aboutModal.SetBody(aboutText)
+	aboutModal.SetBody(bodySplit)
 	aboutModal.Refresh()
 
 	var x, y int
